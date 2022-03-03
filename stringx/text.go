@@ -1,10 +1,7 @@
-package textx
+package stringx
 
-import (
-	"math"
-)
+import "math"
 
-// Deprecated: Use stringx.PixelLen
 func PixelLen(s string) int {
 	var n float64
 	for _, v := range []rune(s) {
