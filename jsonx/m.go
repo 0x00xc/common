@@ -7,15 +7,16 @@ import (
 	"fmt"
 )
 
-//通用json解析
-//使用 interface{} 解析 json 内容，以便兼容各种复杂结构；
-//interface{} 解析结果只有 string, float64（number）, bool 三种类型；
-//此结构的方法仅限json内使用。
+// 通用json解析
+// 使用 interface{} 解析 json 内容，以便兼容各种复杂结构；
+// interface{} 解析结果只有 string, float64（number）, bool 三种类型；
+// 此结构的方法仅限json内使用。
+
 type JSON map[string]interface{}
 
 type Array []JSON
 
-//panic warning
+// panic warning
 func (m JSON) String(key string) string {
 	return m[key].(string)
 }
@@ -36,7 +37,7 @@ func (m JSON) MustString(key string) string {
 	return s
 }
 
-//panic warning
+// panic warning
 func (m JSON) Int(key string) int {
 	return int(m.Number(key))
 }
@@ -53,7 +54,7 @@ func (m JSON) MustInt(key string) int {
 	return int(m.MustNumber(key))
 }
 
-//panic warning
+// panic warning
 func (m JSON) Number(key string) float64 {
 	return m[key].(float64)
 }
@@ -74,7 +75,7 @@ func (m JSON) MustNumber(key string) float64 {
 	return f
 }
 
-//panic warning
+// panic warning
 func (m JSON) Bool(key string) bool {
 	return m[key].(bool)
 }
@@ -95,7 +96,7 @@ func (m JSON) MustBool(key string) bool {
 	return b
 }
 
-//panic warning
+// panic warning
 func (m JSON) GetChild(key string) JSON {
 	if m[key] == nil {
 		return nil
@@ -118,7 +119,7 @@ func (m JSON) Get(key string) interface{} {
 	return m[key]
 }
 
-func DecodeJSON(b []byte) (interface{}, error) {
+func Unmarshal(b []byte) (interface{}, error) {
 	b = bytes.TrimSpace(b)
 	var v interface{}
 	if b[0] == '[' {
