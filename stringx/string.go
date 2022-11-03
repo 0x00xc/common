@@ -2,6 +2,7 @@ package stringx
 
 import (
 	"bytes"
+	"strings"
 	"unicode/utf8"
 )
 
@@ -74,4 +75,34 @@ func Unique(array []string) []string {
 		i++
 	}
 	return a
+}
+
+func ReplaceFunc(s, old string, new func(i int) string) string {
+	// Compute number of replacements.
+	m := strings.Count(s, old)
+	if m == 0 {
+		return s // avoid allocation
+	}
+
+	// Apply replacements to buffer.
+	var b strings.Builder
+	//b.Grow(len(s) + n*(len(new)-len(old)))
+
+	start := 0
+	for i := 0; i < m; i++ {
+		j := start
+		if len(old) == 0 {
+			if i > 0 {
+				_, wid := utf8.DecodeRuneInString(s[start:])
+				j += wid
+			}
+		} else {
+			j += strings.Index(s[start:], old)
+		}
+		b.WriteString(s[start:j])
+		b.WriteString(new(i))
+		start = j + len(old)
+	}
+	b.WriteString(s[start:])
+	return b.String()
 }

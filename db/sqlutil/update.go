@@ -16,13 +16,17 @@ func Update(table string) *UpdateBuilder {
 	return &UpdateBuilder{table: table}
 }
 
-func (b *UpdateBuilder) Set(column string, val interface{}) *UpdateBuilder {
-	//column = placeholder.ReplaceAllString(column, "?")
-	if !strings.Contains(column, "=") {
-		column = column + " = ?"
+func (b *UpdateBuilder) SetColumn(column string, val interface{}) *UpdateBuilder {
+	b.Set(KV(column, val))
+	return b
+}
+
+func (b *UpdateBuilder) Set(kvs ...*KVPair) *UpdateBuilder {
+	for _, kv := range kvs {
+		column, val := kv.KV()
+		b.columns = append(b.columns, column)
+		b.values = append(b.values, val)
 	}
-	b.columns = append(b.columns, column)
-	b.values = append(b.values, val)
 	return b
 }
 

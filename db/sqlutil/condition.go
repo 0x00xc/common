@@ -67,3 +67,20 @@ func (c *condition) build(builder *strings.Builder) []interface{} {
 	}
 	return values
 }
+
+type KVPair struct {
+	Key   string
+	Value interface{}
+}
+
+func (kv *KVPair) KV() (string, interface{}) {
+	column := strings.TrimSpace(kv.Key)
+	if !strings.Contains(column, "=") {
+		column = column + " = ?"
+	}
+	return column, kv.Value
+}
+
+func KV(column string, val interface{}) *KVPair {
+	return &KVPair{Key: column, Value: val}
+}
