@@ -73,3 +73,14 @@ func (c *LRUCache) Get(key interface{}) (interface{}, bool) {
 	c.keys.MoveToBack(data.e)
 	return data.data, true
 }
+
+func (c *LRUCache) Del(key interface{}) {
+	c.lock.Lock()
+	defer c.lock.Unlock()
+	data, ok := c.data[key]
+	if !ok {
+		return
+	}
+	delete(c.data, key)
+	c.keys.Remove(data.e)
+}
