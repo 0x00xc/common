@@ -5,41 +5,6 @@ import (
 	"strings"
 )
 
-func parse() (map[string][]string, []string) {
-	var args = os.Args[1:]
-	var i = 0
-	var k string
-	var single []string
-	var kv = map[string][]string{}
-	for i < len(args) {
-		val := args[i]
-		if strings.HasPrefix(val, "-") {
-			if k != "" {
-				if _, ok := kv[k]; !ok {
-					kv[k] = []string{}
-				} else {
-
-				}
-			}
-			k = val[1:]
-		} else {
-			if k != "" {
-				kv[k] = append(kv[k], val)
-				k = ""
-			} else {
-				single = append(single, val)
-			}
-		}
-		i++
-	}
-	if k != "" {
-		if _, ok := kv[k]; !ok {
-			kv[k] = []string{}
-		}
-	}
-	return kv, single
-}
-
 type KV map[string][]string
 type Cmd []string
 
@@ -88,6 +53,45 @@ func (c Cmd) Options() []string {
 	return []string{}
 }
 
-func Parse() (KV, Cmd) {
+func parse() *Context {
+	var args = os.Args[1:]
+	var i = 0
+	var k string
+	var single []string
+	var kv = map[string][]string{}
+	for i < len(args) {
+		val := args[i]
+		if strings.HasPrefix(val, "-") {
+			if k != "" {
+				if _, ok := kv[k]; !ok {
+					kv[k] = []string{}
+				} else {
+
+				}
+			}
+			k = val[1:]
+		} else {
+			if k != "" {
+				kv[k] = append(kv[k], val)
+				k = ""
+			} else {
+				single = append(single, val)
+			}
+		}
+		i++
+	}
+	if k != "" {
+		if _, ok := kv[k]; !ok {
+			kv[k] = []string{}
+		}
+	}
+	return &Context{
+		args: args,
+		cmd:  single,
+		kvs:  kv,
+	}
+}
+
+func Parse() *Context {
 	return parse()
 }
