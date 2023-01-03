@@ -11,18 +11,17 @@ func TestArgs(t *testing.T) {
 			Handler: func(c *Context) (string, error) {
 				return "build success", nil
 			},
-			Usage: "build this project",
+			Usage: "build:\n\tbuild this project\n\tusage: demo build -o <output dir>",
 		},
 		&Handler{
 			Match: Or(Name("help"), Option("h")),
 			Handler: func(c *Context) (string, error) {
-				return "help message", nil
+				return "this is help message", nil
 			},
-			Usage: "show help message",
+			Usage: "help:\n\tshow help message",
 		},
 	}
 
 	t.Log(c.Do(ctx))
-	t.Log(c.Usage())
 
 }

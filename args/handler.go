@@ -83,12 +83,16 @@ func (c Chain) Do(ctx *Context) (string, error) {
 		}
 		return msg, err
 	}
+	if Or(Name(""), Name("help"), Option("h", "-help"))(ctx) {
+		usage := fmt.Sprintf("Usage for %s:\n%s", ctx.Exe(), c.usage())
+		return usage, nil
+	}
 	exe := ctx.Exe()
 	cmd := ctx.Cmd().Cmd()
 	return "", fmt.Errorf("%s %s: unknown command", exe, cmd)
 }
 
-func (c Chain) Usage() string {
+func (c Chain) usage() string {
 	var usage string
 	for _, h := range c {
 		usage += h.usage() + "\n"
