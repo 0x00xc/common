@@ -5,7 +5,7 @@ import "testing"
 func TestArgs(t *testing.T) {
 	ctx := Parse()
 
-	c := Chain{
+	c := NewChain(
 		&Handler{
 			Match: Name("build"),
 			Handler: func(c *Context) (string, error) {
@@ -20,8 +20,11 @@ func TestArgs(t *testing.T) {
 			},
 			Usage: "help:\n\tshow help message",
 		},
-	}
+	)
 
 	t.Log(c.Do(ctx))
 
+	childContext, _ := ctx.Child()
+
+	c.Do(childContext)
 }

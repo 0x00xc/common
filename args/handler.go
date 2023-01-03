@@ -69,14 +69,31 @@ type handler interface {
 	usage() string
 }
 
-type Chain []handler
-
-func (c Chain) Add(h ...handler) Chain {
-	return append(c, h...)
+type Chain struct {
+	use      string
+	handlers []handler
 }
 
-func (c Chain) Do(ctx *Context) (string, error) {
-	for _, h := range c {
+func NewChain(h ...handler) *Chain {
+	return &Chain{handlers: h}
+}
+
+func (c *Chain) Add(h ...handler) *Chain {
+	c.handlers = append(c.handlers, h...)
+	return c
+}
+
+func (c *Chain) Do(ctx *Context) (string, error) {
+	return c.do(ctx)
+}
+
+func (c *Chain) Usage(usage string) *Chain {
+	c.use = usage
+	return c
+}
+
+func (c *Chain) do(ctx *Context) (string, error) {
+	for _, h := range c.handlers {
 		msg, err := h.do(ctx)
 		if err == ErrContinue {
 			continue
@@ -84,7 +101,7 @@ func (c Chain) Do(ctx *Context) (string, error) {
 		return msg, err
 	}
 	if Or(Name(""), Name("help"), Option("h", "-help"))(ctx) {
-		usage := fmt.Sprintf("Usage for %s:\n%s", ctx.Exe(), c.usage())
+		usage := fmt.Sprintf("%s\nUsage for %s:\n%s", c.use, ctx.Exe(), c.usage())
 		return usage, nil
 	}
 	exe := ctx.Exe()
@@ -92,9 +109,9 @@ func (c Chain) Do(ctx *Context) (string, error) {
 	return "", fmt.Errorf("%s %s: unknown command", exe, cmd)
 }
 
-func (c Chain) usage() string {
-	var usage string
-	for _, h := range c {
+func (c *Chain) usage() string {
+	var usage = c.use + "\n"
+	for _, h := range c.handlers {
 		usage += h.usage() + "\n"
 	}
 	return usage

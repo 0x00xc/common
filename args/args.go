@@ -54,7 +54,8 @@ func (c Cmd) Options() []string {
 }
 
 func parse() *Context {
-	var args = os.Args[1:]
+	var origin = os.Args
+	var args = origin[1:]
 	var i = 0
 	var k string
 	var single []string
@@ -86,7 +87,7 @@ func parse() *Context {
 		}
 	}
 	return &Context{
-		args: args,
+		args: origin,
 		cmd:  single,
 		kvs:  kv,
 	}

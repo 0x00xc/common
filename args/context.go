@@ -1,6 +1,9 @@
 package args
 
-import "strings"
+import (
+	"errors"
+	"strings"
+)
 
 type Context struct {
 	args Cmd
@@ -22,4 +25,16 @@ func (c *Context) Exe() string {
 
 func (c *Context) Cmd() Cmd {
 	return c.cmd
+}
+
+func (c *Context) Child() (*Context, error) {
+	if len(c.cmd) == 0 {
+		return nil, errors.New("child command not found")
+	}
+	child := &Context{
+		args: c.args,
+		cmd:  c.cmd[1:],
+		kvs:  c.kvs,
+	}
+	return child, nil
 }
